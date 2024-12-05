@@ -15,6 +15,7 @@ from openwpm.task_manager import TaskManager
 parser = argparse.ArgumentParser()
 parser.add_argument("--tranco", action="store_true", default=False)
 parser.add_argument("--headless", action="store_true", default=False),
+parser.add_argument("--domainfile")
 
 args = parser.parse_args()
 
@@ -30,14 +31,19 @@ if args.tranco:
     latest_list = t.list()
     sites = ["http://" + x for x in latest_list.top(10)]
 
+if args.domainfile is not None:
+    with open(args.domainfile) as f:
+        domains = f.read().strip().split()
 
-display_mode: Literal["native", "headless", "xvfb"] = "native"
+    sites = ["http://" + x for x in domains]
+
+display_mode: Literal["native", "headless", "xvfb"] = "native" # default: "native"
 if args.headless:
     display_mode = "headless"
 
 # Loads the default ManagerParams
 # and NUM_BROWSERS copies of the default BrowserParams
-NUM_BROWSERS = 2
+NUM_BROWSERS = 10
 manager_params = ManagerParams(num_browsers=NUM_BROWSERS)
 browser_params = [BrowserParams(display_mode=display_mode) for _ in range(NUM_BROWSERS)]
 
@@ -62,6 +68,7 @@ for browser_param in browser_params:
     # Set this value as appropriate for the size of your temp directory
     # if you are running out of space
     browser_param.maximum_profile_size = 50 * (10**20)  # 50 MB = 50 * 2^20 Bytes
+
 
 # Update TaskManager configuration (use this for crawl-wide settings)
 manager_params.data_directory = Path("./datadir/")
@@ -93,10 +100,11 @@ with TaskManager(
             site,
             site_rank=index,
             callback=callback,
+            reset=True
         )
 
         # Start by visiting the page
-        command_sequence.append_command(GetCommand(url=site, sleep=3), timeout=60)
+        command_sequence.append_command(GetCommand(url=site, sleep=5), timeout=30)
         # Have a look at custom_command.py to see how to implement your own command
         command_sequence.append_command(LinkCountingCommand())
 
