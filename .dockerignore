@@ -29,5 +29,8 @@ Extension/src/feature.js
 Extension/build
 
 # Don't need those inside the container
+.dockerignore
 Dockerfile
 docker-compose.yaml
+state.json
+testing.py

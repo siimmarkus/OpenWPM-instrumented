@@ -1,3 +1,6 @@
+# syntax=docker.io/docker/dockerfile:1.7-labs
+# Syntax declaration to be able to use --exclude flag on COPY
+
 FROM ubuntu:22.04
 
 SHELL ["/bin/bash", "-c"]
@@ -20,7 +23,7 @@ RUN apt-get clean -qq \
     # deps to run firefox inc. with xvfb
     && apt-get install firefox xvfb libgtk-3-dev libasound2 libdbus-glib-1-2 libpci3 -qq
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y x11vnc
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y x11vnc jq
 
 ENV HOME /opt
 COPY scripts/install-mamba.sh .
@@ -29,7 +32,8 @@ ENV PATH $HOME/mamba/bin:$PATH
 
 # Install OpenWPM
 WORKDIR /opt/OpenWPM
-COPY . .
+#COPY . .
+COPY --exclude=entrypoint.sh --exclude=demo.py . .
 RUN ./install.sh
 ENV PATH $HOME/mamba/envs/openwpm/bin:$PATH
 
@@ -38,12 +42,10 @@ ENV PATH $HOME/mamba/envs/openwpm/bin:$PATH
 RUN mv firefox-bin /opt/firefox-bin
 ENV FIREFOX_BINARY /opt/firefox-bin/firefox-bin
 
-# Debugging why VNC is not working
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y python3-pip x11vnc fluxbox gnome-terminal dbus-x11 xvfb libpq-dev
+# Copy these in a later layer to speed up container recreation
+COPY demo.py entrypoint.sh ./
 
-# Setting demo.py as the default command
-#CMD ["python", "demo.py", "--domainfile", "domains.txt"]
 
 # x11vnc and OpenWPM use the DISPLAY env variable to decide which display to use
 ENV DISPLAY=:99
-ENTRYPOINT Xvfb $DISPLAY -ac & x11vnc -forever -passwdfile $VNC_PASSWORD_FILE & python demo.py --domainfile domains.txt
+ENTRYPOINT ./entrypoint.sh
