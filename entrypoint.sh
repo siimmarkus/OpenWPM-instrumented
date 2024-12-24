@@ -16,6 +16,6 @@ do
   #rm /tmp/openwpm_profile_archive_*
 
   # Run OpenWPM
-  python demo.py --domainfile tranco.txt --maxdomains 10000
+  python demo.py --domainfile tranco.txt
 
 done

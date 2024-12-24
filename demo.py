@@ -49,7 +49,7 @@ if args.domainfile is not None:
         state = json.load(f)
 
     # Read batch of domains
-    with open("domains.txt") as f:
+    with open(args.domainfile) as f:
         domains = f.read().strip().split()
 
         if args.maxdomains == -1:
