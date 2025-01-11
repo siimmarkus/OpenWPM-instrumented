@@ -1,7 +1,7 @@
 
 services:
   openwpm:
-    container_name: openwpm
+    container_name: openwpm-10
     build: .
     environment:
       VNC_PASSWORD_FILE: /run/secrets/vnc_password

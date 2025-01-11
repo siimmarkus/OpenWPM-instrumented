@@ -30,6 +30,7 @@ Extension/build
 
 # Don't need those inside the container
 .dockerignore
+.gitignore
 Dockerfile
 docker-compose.yaml
 state.json

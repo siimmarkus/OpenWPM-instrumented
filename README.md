@@ -1,6 +1,20 @@
 
 # OpenWPM [![Documentation Status](https://readthedocs.org/projects/openwpm/badge/?version=latest)](https://openwpm.readthedocs.io/en/latest/?badge=latest) [![Build Status](https://github.com/openwpm/OpenWPM/workflows/Tests%20and%20linting/badge.svg?branch=master)](https://github.com/openwpm/OpenWPM/actions?query=branch%3Amaster) [![OpenWPM Matrix Channel](https://img.shields.io/matrix/OpenWPM:mozilla.org?label=Join%20us%20on%20matrix&server_fqdn=mozilla.modular.im)](https://matrix.to/#/#OpenWPM:mozilla.org?via=mozilla.org) <!-- omit in toc -->
+## Update: January 2025
+This is my fork of up-to-date OpenWPM that has extra instrumentation to produce output required for WebGraph. 
+Extra instrumentation is based on [this repository ](https://github.com/sandrasiby/OpenWPM/tree/webgraph) but as the original
+instrumented repository was using an out-dated version of WebGraph, we were unable to get it to work.
 
+In addition we did the following changes:
+- Added dockerization with GUI and VNC for that was required for our research. The docerization was modelled off of this
+[PythonCrawler](https://github.com/cispa/login-security-landscape/tree/main/PythonCrawler) repository.
+- Added an `entrypoint.sh` script which restarts OpenWPM every once in a while to combat memory leaks.
+- Updated the `demo.py` script to take an input file containing domains to crawl and the target of how many domains to crawl.
+
+### Usage
+``` docker compose up -d --build ```
+
+----
 OpenWPM is a web privacy measurement framework which makes it easy to
 collect data for privacy studies on a scale of thousands to millions
 of websites. OpenWPM is built on top of Firefox, with automation provided
